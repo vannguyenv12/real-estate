@@ -1,0 +1,158 @@
+✅ ✅ ✅ PayPal Integration
+
+👉 1. Github:
+----------------------------------------------------
+https://github.com/thephpleague/omnipay-paypal
+
+
+👉 2. Install via Composer:
+----------------------------------------------------
+composer require league/omnipay omnipay/paypal
+
+
+👉 3. Configuration: config.php
+----------------------------------------------------
+require_once "vendor/autoload.php"; 
+use Omnipay\Omnipay;
+ 
+define('CLIENT_ID', 'your_client_id');
+define('CLIENT_SECRET', 'your_client_secret');
+ 
+define('PAYPAL_RETURN_URL', 'http://localhost/payment/success.php');
+define('PAYPAL_CANCEL_URL', 'http://localhost/payment/cancel.php');
+define('PAYPAL_CURRENCY', 'USD'); // set your currency here
+ 
+$gateway = Omnipay::create('PayPal_Rest');
+$gateway->setClientId(CLIENT_ID);
+$gateway->setSecret(CLIENT_SECRET);
+$gateway->setTestMode(true); //set it to 'false' when go live
+
+
+👉 4. Form Submit: index.php
+----------------------------------------------------
+include "config.php";
+if(isset($_POST['form_paypal'])) {
+    try {
+        $response = $gateway->purchase(array(
+            'amount' => $_POST['price'],
+            'currency' => PAYPAL_CURRENCY,
+            'returnUrl' => PAYPAL_RETURN_URL,
+            'cancelUrl' => PAYPAL_CANCEL_URL,
+        ))->send();
+        if ($response->isRedirect()) {
+            $response->redirect();
+        } else {
+            echo $response->getMessage();
+        }
+    } catch(Exception $e) {
+        echo $e->getMessage();
+    }
+}
+<form action="" method="post">
+    <input type="text" name="price" value="42">
+    <input type="submit" value="Pay with PayPal" name="form_paypal">
+</form>
+
+
+👉 5. Success Response (Transaction Approved): success.php
+----------------------------------------------------------------------
+include "config.php";
+if (array_key_exists('paymentId', $_GET) && array_key_exists('PayerID', $_GET)) {
+    $transaction = $gateway->completePurchase(array(
+        'payer_id' => $_GET['PayerID'],
+        'transactionReference' => $_GET['paymentId'],
+    ));
+    $response = $transaction->send();
+    if ($response->isSuccessful()) {
+        $arr_body = $response->getData();
+ 
+        $payment_id = $arr_body['id'];
+        $payer_id = $arr_body['payer']['payer_info']['payer_id'];
+        $payer_email = $arr_body['payer']['payer_info']['email'];
+        $amount = $arr_body['transactions'][0]['amount']['total'];
+        $currency = PAYPAL_CURRENCY;
+        $payment_status = $arr_body['state'];
+ 
+        // Insert into database
+		
+        echo "Payment is successful. Your transaction id is: ". $payment_id;
+    } else {
+        echo $response->getMessage();
+    }
+} else {
+    header('location: '.PAYPAL_CANCEL_URL);
+}
+
+
+👉 6. Cancel Page: cancel.php
+----------------------------------------------------
+<h3>Payment is cancelled!</h3>
+
+
+
+
+✅ ✅ ✅ Stripe Integration
+
+👉 1. Github:
+----------------------------------------------------
+https://github.com/stripe/stripe-php
+
+
+👉 2. Install via Composer:
+----------------------------------------------------
+composer require stripe/stripe-php
+
+
+👉 3. Configuration:
+----------------------------------------------------
+define('STRIPE_TEST_PK', 'publishable_key');
+define('STRIPE_TEST_SK', 'secret_key');
+
+define('STRIPE_SUCCESS_URL', 'http://localhost/payment/success.php');
+define('STRIPE_CANCEL_URL', 'http://localhost/payment/cancel.php');
+
+
+👉 4. Form Submit: index.php
+----------------------------------------------------
+include "config.php";
+if(isset($_POST['form_stripe'])) {
+    \Stripe\Stripe::setApiKey(STRIPE_TEST_SK);
+    $response = \Stripe\Checkout\Session::create([
+        'line_items' => [
+            [
+                'price_data' => [
+                    'currency' => 'usd',
+                    'product_data' => [
+                        'name' => 'Mobile Phone'
+                    ],
+                    'unit_amount' => $_POST['price'] * 100,
+                ],
+                'quantity' => 1,
+            ],
+        ],
+        'mode' => 'payment',
+        'success_url' => STRIPE_SUCCESS_URL,
+        'cancel_url' => STRIPE_CANCEL_URL,
+    ]);
+    // echo "<pre>";
+    // print_r($response);
+    // echo "</pre>";
+    header('location: '.$response->url);
+}
+<form action="" method="post">
+    <input type="text" name="price" value="42">
+    <input type="submit" value="Pay with Stripe" name="form_stripe">
+</form>
+
+
+👉 5. Success Page: success.php
+----------------------------------------------------
+<h3>Payment is successful!</h3>
+
+
+👉 6. Cancel Page: cancel.php
+----------------------------------------------------
+<h3>Payment is cancelled!</h3>
+
+
+

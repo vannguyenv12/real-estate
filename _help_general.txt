@@ -1,0 +1,670 @@
+✅ ✅ ✅ Database Connection
+
+$dbhost = 'localhost';
+$dbname = 'db_name';
+$dbuser = 'db_username';
+$dbpass = 'db_pass';
+try {
+    $pdo = new PDO("mysql:host={$dbhost};dbname={$dbname}", $dbuser, $dbpass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+}
+catch( PDOException $exception ) {
+    echo "Connection error :" . $exception->getMessage();
+}
+define("BASE_URL", "http://localhost/project/");
+define("ADMIN_URL", BASE_URL."admin/");
+
+
+
+✅ ✅ ✅ Validations
+
+if($_POST['email'] == '') {
+    throw new Exception("Email can not be empty");
+}
+if(!filter_var($_POST['email'],FILTER_VALIDATE_EMAIL)) {
+    throw new Exception("Email is invalid");
+}
+
+
+
+✅ ✅ ✅ Common Top
+
+ob_start();
+session_start();
+
+
+
+✅ ✅ ✅ Try-Catch
+
+try {
+    // throw new Exception("Message Here");
+} catch(Exception $e) {
+    $error_message = $e->getMessage();
+}
+
+
+
+✅ ✅ ✅ Error and Success Message
+
+if(isset($error_message)) {
+    echo $error_message;
+}
+if(isset($success_message)) {
+    echo $success_message;
+}
+
+
+
+✅ ✅ ✅ Current Page
+
+$cur_page = substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+1);
+
+
+
+✅ ✅ ✅ Login
+
+if($_POST['email'] == '') {throw new Exception("Email can not be empty");}
+if(!filter_var($_POST['email'],FILTER_VALIDATE_EMAIL)) {throw new Exception("Email is invalid");}
+if($_POST['password'] == '') {throw new Exception("Password can not be empty");}
+$q = $pdo->prepare("SELECT * FROM admins WHERE email=?");
+$q->execute([$_POST['email']]);
+$total = $q->rowCount();
+if(!$total) {throw new Exception("Email is not found");} 
+else {
+    $result = $q->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($result as $row) {
+        $password = $row['password'];
+        if(!password_verify($_POST['password'], $password)) {throw new Exception("Password does not match");}
+    }
+}
+$_SESSION['admin'] = $row;
+header('location: '.ADMIN_URL.'index.php');
+
+
+
+✅ ✅ ✅ Show Session Data 
+
+echo $_SESSION['user']['firstname'];
+
+
+
+✅ ✅ ✅ Logout
+
+include "header.php";
+unset($_SESSION['admin']);
+header('location: '.ADMIN_URL.'login.php');
+exit;
+
+
+
+✅ ✅ ✅ CRUD
+
+👉 Insert
+$statement = $pdo->prepare("INSERT INTO users (firstname,lastname) VALUES (?,?)");
+$statement->execute([$_POST['firstname'],$_POST['lastname']]);
+
+👉 Update
+$statement = $pdo->prepare("UPDATE users SET firstname=?,lastname=? WHERE id=?");
+$statement->execute([$_POST['firstname'],$_POST['lastname'],$_POST['id']]);
+
+👉 Delete
+$statement = $pdo->prepare("DELETE FROM users WHERE id=?");
+$statement->execute([$_POST['id']]);
+
+👉 Select
+$statement = $pdo->prepare("SELECT * FROM users WHERE id=?");
+$statement->execute([$_GET['id']]);
+$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+$total = $statement->rowCount();
+foreach ($result as $row) {
+    $firstname = $row['firstname'];
+    $lastname = $row['lastname'];
+}
+
+
+
+✅ ✅ ✅ Sending Email
+
+👉 Install Using Composer
+composer require phpmailer/phpmailer
+
+👉 header.php - in top of page
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+require '../vendor/autoload.php';
+
+👉 contact.php - in top of page
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+👉 contact.php - sending mail
+$mail = new PHPMailer(true);
+try {
+    $mail->isSMTP();
+    $mail->Host = SMTP_HOST;
+    $mail->SMTPAuth = true;
+    $mail->Username = SMTP_USERNAME;
+    $mail->Password = SMTP_PASSWORD;
+    $mail->SMTPSecure = SMTP_ENCRYPTION;
+    $mail->Port = SMTP_PORT;
+    $mail->setFrom(SMTP_FROM);
+    $mail->addAddress($_POST['email']);
+    $mail->isHTML(true);
+    $mail->Subject = 'Reset Password';
+    $mail->Body = $email_message;
+    $mail->send();
+    $success_message = 'Please check your email and follow the steps.';
+} catch (Exception $e) {
+    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+}
+
+
+
+✅ ✅ ✅ Registration
+
+👉 Top Section 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+👉 Main code
+$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+$token = time();
+$statement = $pdo->prepare("INSERT INTO users (firstname,lastname,email,phone,password,token,status) VALUES (?,?,?,?,?,?,?)");
+$statement->execute([$_POST['firstname'],$_POST['lastname'],$_POST['email'],$_POST['phone'],$password,$token,0]);
+
+$link = BASE_URL.'registration-verify.php?email='.$_POST['email'].'&token='.$token;
+$email_message = 'Please click on this link to verify registration: <br>';
+$email_message .= '<a href="'.$link.'">Click Here</a>';
+
+$mail = new PHPMailer(true);
+try {
+    $mail->isSMTP();
+    $mail->Host = 'smtp.mailtrap.io';
+    $mail->SMTPAuth = true;
+    $mail->Username = '88481333b65a6b';
+    $mail->Password = 'e355f1d8f0b1db';
+    $mail->SMTPSecure = 'tls';
+    $mail->Port = 2525;
+    $mail->setFrom('contact@example.com');
+    $mail->addAddress($_POST['email']);
+    $mail->addReplyTo('contact@example.com');
+    $mail->isHTML(true);
+    $mail->Subject = 'Registration Verification Email';
+    $mail->Body = $email_message;
+    $mail->send();
+    $success_message = 'Registration is completed. An email is sent to your email address. Please check that and verify the registration.';
+
+} catch (Exception $e) {
+    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+}
+
+
+
+✅ ✅ ✅ Registration Verify
+
+include_once('header.php');
+if(!isset($_REQUEST['email'])||!isset($_REQUEST['token'])) {
+    header('location: '.BASE_URL);
+}
+
+$statement = $pdo->prepare("SELECT * FROM users WHERE email=? AND token=?");
+$statement->execute([$_REQUEST['email'],$_REQUEST['token']]);
+$total = $statement->rowCount();
+if($total) {
+    $statement = $pdo->prepare("UPDATE users SET token=?, status=? WHERE email=? AND token=?");
+    $statement->execute(['',1,$_REQUEST['email'],$_REQUEST['token']]);
+    header('location: '.BASE_URL.'registration-success.php');
+} else {
+    header('location: '.BASE_URL);
+}
+
+
+
+✅ ✅ ✅ Forget Password
+
+if($_POST['email'] == '') {throw new Exception("Email can not be empty");}
+if(!filter_var($_POST['email'],FILTER_VALIDATE_EMAIL)) {throw new Exception("Email is invalid");}
+
+$q = $pdo->prepare("SELECT * FROM admins WHERE email=?");
+$q->execute([$_POST['email']]);
+$total = $q->rowCount();
+if(!$total) {throw new Exception("Email is not found");}
+
+$token = time();
+$statement = $pdo->prepare("UPDATE admins SET token=? WHERE email=?");
+$statement->execute([$token,$_POST['email']]);
+
+$link = ADMIN_URL.'reset-password.php?email='.$_POST['email'].'&token='.$token;
+$email_message = 'Please click on this link to reset your password: <br>';
+$email_message .= '<a href="'.$link.'">Click Here</a>';
+$mail = new PHPMailer(true);
+try {
+    $mail->isSMTP();
+    $mail->Host = SMTP_HOST;
+    $mail->SMTPAuth = true;
+    $mail->Username = SMTP_USERNAME;
+    $mail->Password = SMTP_PASSWORD;
+    $mail->SMTPSecure = SMTP_ENCRYPTION;
+    $mail->Port = SMTP_PORT;
+    $mail->setFrom(SMTP_FROM);
+    $mail->addAddress($_POST['email']);
+    $mail->isHTML(true);
+    $mail->Subject = 'Reset Password';
+    $mail->Body = $email_message;
+    $mail->send();
+    $success_message = 'Please check your email and follow the steps.';
+} catch (Exception $e) {
+    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+}
+
+
+
+✅ ✅ ✅ Reset Password
+
+👉 Checking in Top
+$statement = $pdo->prepare("SELECT * FROM admins WHERE email=? AND token=?");
+$statement->execute([$_REQUEST['email'],$_REQUEST['token']]);
+$total = $statement->rowCount();
+if(!$total) {
+    header('location: '.ADMIN_URL.'login.php');
+    exit;
+}
+
+👉 Others
+if($_POST['password'] == '' || $_POST['retype_password'] == '') {throw new Exception("Password can not be empty");}
+
+if($_POST['password'] != $_POST['retype_password']) {throw new Exception("Passwords does not match");}
+
+$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+$statement = $pdo->prepare("UPDATE admins SET token=?, password=? WHERE email=? AND token=?");
+$statement->execute(['',$password,$_REQUEST['email'],$_REQUEST['token']]);
+
+header('location: '.ADMIN_URL.'login.php?msg=success');
+exit;
+
+
+
+
+
+✅ ✅ ✅ File Upload
+
+$path = $_FILES['my_file']['name'];
+$path_tmp = $_FILES['my_file']['tmp_name'];
+
+$size = $_FILES['my_file']['size']/1024/1024;
+$data = getimagesize($path_tmp);
+$width = $data[0];
+$height = $data[1];
+$new_width = ceil($width/4);
+$new_height = ceil($height/4);
+
+$extension = pathinfo($path, PATHINFO_EXTENSION);
+$filename = time().".".$extension;
+
+$finfo = finfo_open(FILEINFO_MIME_TYPE);
+$mime = finfo_file($finfo, $path_tmp);
+
+if($mime == 'image/jpeg' || $mime == 'image/png' || $mime == 'application/pdf') {
+    copy($path_tmp, 'uploads/'.$filename);
+    move_uploaded_file($path_tmp, 'uploads1/'.$filename);
+
+    $filename_small = time()."-small.".$extension;
+    $destination = 'uploads/'.$filename_small;
+    image_resize($path_tmp,$destination,$new_width,$new_height);
+}
+
+
+
+✅ ✅ ✅ File Delete
+
+unlink('uploads/1674955499-small.jpg');
+
+
+
+
+✅✅✅ Image Resize Function
+
+function image_resize($source,$destination,$new_width=100,$new_height=100) {
+    list($width,$height) = getimagesize($source);
+    $newimage = imagecreatetruecolor($new_width,$new_height);
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $source);
+    if($mime == 'image/jpeg') {
+        $src = imagecreatefromjpeg($source);
+        imagecopyresized($newimage,$src,0,0,0,0,$new_width,$new_height,$width,$height);
+        imagejpeg($newimage,$destination);
+    } elseif($mime == 'image/png') {
+        $src = imagecreatefrompng($source);
+        imagecopyresized($newimage,$src,0,0,0,0,$new_width,$new_height,$width,$height);
+        imagepng($newimage,$destination);
+    } elseif($mime == 'image/gif') {
+        $src = imagecreatefromgif($source);
+        imagecopyresized($newimage,$src,0,0,0,0,$new_width,$new_height,$width,$height);
+        imagegif($newimage,$destination);
+    }
+}
+
+
+✅ ✅ ✅ JSON Encode and Decode
+
+👉 Encode
+$studentInfo = [
+    'firstName' => 'Smith',
+    'lastName' => 'Cooper',
+    'class' => 9,
+    'age' => 35
+];
+echo json_encode($studentInfo);
+Output:
+{"firstName":"Smith","lastName":"Cooper","class":9,"age":35}
+
+👉 Decode
+$data = '{"firstName":"Smith","lastName":"Cooper","class":9,"age":35}';
+$result = json_decode($data,true);
+echo $result['firstName']; // Smith
+print_r($result);
+Output:
+Array
+(
+    [firstName] => Smith
+    [lastName] => Cooper
+    [class] => 9
+    [age] => 35
+)
+
+
+✅ ✅ ✅ Date Time
+
+date("Y-m-d H:i:s"); // 2023-08-09 13:49:58
+
+$ts = strtotime("2023-08-09 15:30:00");
+echo date("F j, Y, g:i a", $ts);  // August 9, 2023, 3:30 pm
+
+👉 Calculate future or past dates
+//$today = date("Y-m-d");
+//$daysToAdd = 7;
+//$futureDate = date("Y-m-d", strtotime($today . " + $daysToAdd days"));
+//echo "Today: {$today} and after 7 days: {$futureDate}"; // Today: 2023-08-09 and after 7 days: 2023-08-16
+
+👉 Time Difference
+//$startTime = strtotime("2023-08-09 10:00:00");
+//$endTime = strtotime("2023-08-09 15:30:00");
+//$timeDiff = $endTime - $startTime;
+//echo "Time Difference: " . gmdate("H:i:s", $timeDiff); // Time Difference: 05:30:00
+
+👉 Difference Between Two Dates:
+//$startDate = strtotime("2023-08-01");
+//$endDate = strtotime("2023-08-15");
+//$daysDifference = ($endDate - $startDate) / (60 * 60 * 24);
+//echo "$daysDifference days"; // 14 days
+
+👉 Age Calculator:
+//$startDate = new DateTime("1990-10-12");
+//$endDate = new DateTime("now");
+//$interval = $startDate->diff($endDate);
+//echo "Difference: {$interval->y} years, {$interval->m} months, {$interval->d} days"; // Difference: 38 years, 10 months, 15 days
+
+👉 Getting how many hours or times ago
+//$c_time = time();
+//$p_time = strtotime("2023-08-02 15:30:00");
+//$diff_in_sec = $c_time - $p_time;
+//if ($diff_in_sec < 60) {
+//    $timeAgo = "just now";
+//} elseif ($diff_in_sec < 3600) {
+//    $timeAgo = floor($diff_in_sec / 60) . " minutes ago";
+//} elseif ($diff_in_sec < 86400) {
+//    $timeAgo = floor($diff_in_sec / 3600) . " hours ago";
+//} elseif ($diff_in_sec < 2592000) {
+//    $timeAgo = floor($diff_in_sec / 86400) . " days ago";
+//} elseif ($diff_in_sec < 31536000) {
+//    $months = floor($diff_in_sec / 2592000);
+//    $timeAgo = "$months " . ($months > 1 ? 'months' : 'month') . " ago";
+//} else {
+//    $years = floor($diff_in_sec / 31536000);
+//    $timeAgo = "$years " . ($years > 1 ? 'years' : 'year') . " ago";
+//}
+//echo "Posted $timeAgo";
+
+
+✅ ✅ ✅ Security 
+
+👉 SQL Injection
+// $username = addslashes($_POST['username']);
+// Email Validation if email is used instead of username
+// Use Prepared Statement [RECOMMENDED]
+// Data from url: $id = (int)$_GET['id'];
+
+
+👉 XSS Attack - Form data
+$username = strip_tags($_POST['username']);
+
+👉 XSS Attack - Output data
+foreach ($result as $row) {
+    echo 'Current Username: '.htmlspecialchars($row['username']);
+}
+
+
+
+
+
+✅ ✅ ✅ Pagination
+
+$per_page = 4;
+$q = $pdo->prepare("SELECT * FROM students");
+$q->execute();
+$total = $q->rowCount();
+
+$total_pages = ceil($total/$per_page);    
+
+if(!isset($_REQUEST['p'])) {
+    $start = 1;
+} else {
+    $start = $per_page * ($_REQUEST['p']-1) + 1;
+}
+
+$j=0;
+$k=0;
+$arr1 = [];
+$res = $q->fetchAll();
+foreach($res as $row) {
+    $j++;
+    if($j>=$start) {
+        $k++;
+        if($k>$per_page) {break;}
+        $arr1[] = $row['id'];
+    }
+}
+?>
+<?php
+$statement = $pdo->prepare("SELECT * FROM students");
+$statement->execute();
+$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+foreach ($result as $row) {
+
+    if(!in_array($row['id'],$arr1)) {
+        continue;
+    }
+
+    echo '<div style="padding:20px;margin-bottom:10px;background:#ddd;">';
+    echo 'Name: '.$row['firstname'].' '.$row['lastname'].'<br>';
+    echo 'Email: '.$row['email'];
+    echo '</div>';
+}    
+
+if(isset($_REQUEST['p'])) {
+    if($_REQUEST['p'] == 1) {
+        echo '<a class="links" href="javascript:void;" style="background:#ddd;"> << </a>';
+    } else {
+        echo '<a class="links" href="http://localhost/php_practice/index.php?p='.($_REQUEST['p']-1).'"> << </a>';
+    }
+} else {
+    echo '<a class="links" href="javascript:void;" style="background:#ddd;"> << </a>';
+}
+
+
+for($i=1;$i<=$total_pages;$i++) {
+    echo '<a class="links" href="http://localhost/php_practice/index.php?p='.$i.'">'.$i.'</a>';
+}
+
+if(isset($_REQUEST['p'])) {
+    if($_REQUEST['p'] == $total_pages) {
+        echo '<a class="links" href="javascript:void;" style="background:#ddd;"> >> </a>';
+    } else {
+        echo '<a class="links" href="http://localhost/php_practice/index.php?p='.($_REQUEST['p']+1).'"> >> </a>';
+    }
+} else {
+    echo '<a class="links" href="http://localhost/php_practice/index.php?p=2"> >> </a>';
+}
+
+
+
+
+
+✅ ✅ ✅ .htaccess
+
+RewriteEngine On
+
+RewriteRule  ^category/(.*)$/?$     category.php?slug=$1   [NC,L]
+RewriteRule  ^news/(.*)$/?$         news.php?slug=$1       [NC,L]
+RewriteRule  ^service/(.*)$/?$      service.php?slug=$1    [NC,L]
+RewriteRule  ^services              services.php           [NC,L]
+RewriteRule  ^search                search.php             [NC,L]
+
+
+👉 Description
+
+This line is part of an Apache mod_rewrite rule in an .htaccess file. It is used for URL rewriting, which means it will take a requested URL and rewrite it to a different format before it's processed by the server. Let's break down the components:
+
+
+-> RewriteRule: This is the directive that indicates that a URL rewriting rule is being defined.
+
+
+-> ^category/(.*)$: This is the pattern to match in the incoming URL. Let's break it down further:
+
+-> ^: This symbol indicates the start of the URL.
+
+-> category/: This is a literal string that needs to be present in the URL for the rule to match.
+(.*): This is a regular expression pattern inside parentheses. It captures any characters (.*), including letters, numbers, or symbols, and stores them for later use in the rule.
+
+-> $: This symbol indicates the end of the URL.
+
+
+
+-> category.php?slug=$1: This is the substitution part of the rule, where the URL is rewritten to this format:
+
+-> category.php: This is the name of the PHP script that will handle the rewritten URL.
+
+-> ?slug=$1: This is a query string appended to the script. The $1 is a backreference to the captured part of the URL from (.*), which is essentially the value passed as a "slug" to the PHP script.
+
+
+
+-> [NC,L]: These are flags that modify the behavior of the rewrite rule:
+
+-> NC: This flag means "no case," which makes the pattern matching case-insensitive. So, "category" and "Category" would both match.
+-> L: This flag means "last." It tells Apache to stop processing further rules if this rule is applied. This can be useful to prevent multiple rules from matching the same URL.
+
+
+
+
+✅ ✅ ✅ .htaccess - advanced 
+
+👉 Target: 
+From: 
+http://localhost:8888/pagination/category.php?slug=travel&page=3
+
+To:
+http://localhost:8888/pagination/category/travel/3
+
+
+👉 .htaccess code:
+
+RewriteEngine On
+RewriteBase /pagination/
+
+# Rewrite URL for category/travel/3 to category.php?slug=travel&p=3
+RewriteRule ^category/([^/]+)/(\d+)$ category.php?slug=$1&p=$2 [L]
+
+
+
+
+✅ ✅ ✅ Pagination - with category and slug
+
+👉 .htaccess code:
+
+RewriteEngine On
+RewriteBase /pagination/
+
+# Rewrite URL for category/travel/3 to category.php?slug=travel&p=3
+RewriteRule ^category/([^/]+)/(\d+)$ category.php?slug=$1&p=$2 [L]
+
+
+👉 Main Code - category.php
+
+define('BASE_PATH','http://localhost:8888/pagination/');
+
+$per_page = 4;
+$q = $pdo->prepare("SELECT * FROM students WHERE slug=?");
+$q->execute(['travel']);
+$total = $q->rowCount();
+$total_pages = ceil($total/$per_page);    
+
+if(!isset($_REQUEST['p'])) {
+    $start = 1;
+} else {
+    $start = $per_page * ($_REQUEST['p']-1) + 1;
+}
+
+$j=0;
+$k=0;
+$arr1 = [];
+$res = $q->fetchAll();
+foreach($res as $row) {
+    $j++;
+    if($j>=$start) {
+        $k++;
+        if($k>$per_page) {break;}
+        $arr1[] = $row['id'];
+    }
+}
+?>
+<?php
+$statement = $pdo->prepare("SELECT * FROM students WHERE slug=?");
+$statement->execute(['travel']);
+$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+foreach ($result as $row) {
+    if(!in_array($row['id'],$arr1)) {
+        continue;
+    }
+    echo '<div style="padding:20px;margin-bottom:10px;background:#ddd;">';
+    echo 'Name: '.$row['firstname'].' '.$row['lastname'].'<br>';
+    echo 'Email: '.$row['email'];
+    echo '</div>';
+}    
+
+if(isset($_REQUEST['p'])) {
+    if($_REQUEST['p'] == 1) {
+        echo '<a class="links" href="javascript:void;" style="background:#ddd;"> << </a>';
+    } else {
+        echo '<a class="links" href="'.BASE_PATH.'category/'.$_GET['slug'].'/'.($_REQUEST['p']-1).'"> << </a>'; }
+} else {
+    echo '<a class="links" href="javascript:void;" style="background:#ddd;"> << </a>';
+}
+
+
+for($i=1;$i<=$total_pages;$i++) {
+    echo '<a class="links" href="'.BASE_PATH.'category/'.$_GET['slug'].'/'.$i.'">'.$i.'</a>';
+}
+
+if(isset($_REQUEST['p'])) {
+    if($_REQUEST['p'] == $total_pages) {
+        echo '<a class="links" href="javascript:void;" style="background:#ddd;"> >> </a>';
+    } else {
+        echo '<a class="links" href="'.BASE_PATH.'category/'.$_GET['slug'].'/'.($_REQUEST['p']+1).'"> >> </a>';
+    }
+} else {
+    echo '<a class="links" href="'.BASE_PATH.'category/'.$_GET['slug'].'/2"> >> </a>';
+}
