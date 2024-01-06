@@ -41,7 +41,7 @@ if (isset($_POST['form_update'])) {
 
             if ($mime == 'image/jpeg' || $mime == 'image/png') {
                 if ($_SESSION['admin']['photo']) {
-                    unlink('../uploads', $_SESSION['admin']['photo']);
+                    unlink('../uploads/' . $_SESSION['admin']['photo']);
                 }
 
                 move_uploaded_file($path_tmp, '../uploads/' . $filename);

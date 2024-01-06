@@ -23,17 +23,20 @@
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <select name="" class="form-select select2">
-                                                <option value="">Select Location</option>
-                                                <option value="">Boston</option>
-                                                <option value="">California</option>
-                                                <option value="">Chicago</option>
-                                                <option value="">Dallas</option>
-                                                <option value="">Denver</option>
-                                                <option value="">NewYork</option>
-                                                <option value="">San Diago</option>
-                                                <option value="">Washington</option>
-                                                <option value="">Winconsin</option>
+                                                <?php
+
+                                                $statement = $pdo->prepare("SELECT * FROM locations ORDER BY name ASC");
+                                                $statement->execute();
+                                                $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+                                                foreach ($result as $row) {
+                                                ?>
+                                                    <option value=""><?php echo $row['name']; ?></option>
+                                                <?php
+                                                }
+
+                                                ?>
                                             </select>
+
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
@@ -510,94 +513,30 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="item">
-                    <div class="photo">
-                        <a href="location.html"><img src="uploads/location1.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2><a href="location.html">Boston</a></h2>
-                        <h4>(10 Properties)</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="item">
-                    <div class="photo">
-                        <a href="location.html"><img src="uploads/location2.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2><a href="location.html">California</a></h2>
-                        <h4>(5 Properties)</h4>
+            <?php
+
+            $statement = $pdo->prepare("SELECT * FROM locations ORDER BY name ASC");
+            $statement->execute();
+            $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($result as $row) {
+            ?>
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="item">
+                        <div class="photo">
+                            <a href="location.html"><img src="<?php echo BASE_URL; ?>uploads/<?php echo $row['photo'] ?>" alt=""></a>
+                        </div>
+                        <div class="text">
+                            <h2><a href=""><?php echo $row['name'] ?></a></h2>
+                            <h4>(10 Properties)</h4>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="item">
-                    <div class="photo">
-                        <a href="location.html"><img src="uploads/location3.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2><a href="location.html">Chicago</a></h2>
-                        <h4>(2 Properties)</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="item">
-                    <div class="photo">
-                        <a href="location.html"><img src="uploads/location4.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2><a href="location.html">Dallas</a></h2>
-                        <h4>(0 Properties)</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="item">
-                    <div class="photo">
-                        <a href="location.html"><img src="uploads/location5.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2><a href="location.html">Denver</a></h2>
-                        <h4>(0 Properties)</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="item">
-                    <div class="photo">
-                        <a href="location.html"><img src="uploads/location6.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2><a href="location.html">New York</a></h2>
-                        <h4>(0 Properties)</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="item">
-                    <div class="photo">
-                        <a href="location.html"><img src="uploads/location7.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2><a href="location.html">San Diago</a></h2>
-                        <h4>(0 Properties)</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <div class="item">
-                    <div class="photo">
-                        <a href="location.html"><img src="uploads/location8.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2><a href="location.html">Washington</a></h2>
-                        <h4>(0 Properties)</h4>
-                    </div>
-                </div>
-            </div>
+            <?php
+            }
+
+            ?>
+
+
         </div>
     </div>
 </div>
