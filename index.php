@@ -23,6 +23,8 @@
                                     <div class="col-lg-3">
                                         <div class="form-group">
                                             <select name="" class="form-select select2">
+                                                <option value="">Select Location</option>
+
                                                 <?php
 
                                                 $statement = $pdo->prepare("SELECT * FROM locations ORDER BY name ASC");
@@ -43,14 +45,19 @@
                                         <div class="form-group">
                                             <select name="" class="form-select select2">
                                                 <option value="">Select Type</option>
-                                                <option value="">Apartment</option>
-                                                <option value="">Bungalow</option>
-                                                <option value="">Cabin</option>
-                                                <option value="">Condo</option>
-                                                <option value="">Cottage</option>
-                                                <option value="">Duplex</option>
-                                                <option value="">Townhouse</option>
-                                                <option value="">Villa</option>
+                                                <?php
+
+                                                $statement = $pdo->prepare("SELECT * FROM types ORDER BY name ASC");
+                                                $statement->execute();
+                                                $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+                                                foreach ($result as $row) {
+                                                ?>
+                                                    <option value=""><?php echo $row['name']; ?></option>
+                                                <?php
+                                                }
+
+                                                ?>
+
                                             </select>
                                         </div>
                                     </div>
