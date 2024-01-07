@@ -54,7 +54,7 @@ if (array_key_exists('paymentId', $_GET) && array_key_exists('PayerID', $_GET)) 
         ]);
 
         $_SESSION['success_message'] = "Payment is successful.";
-        header('location: ' . BASE_URL . 'agent-dashboard.php');
+        header('location: ' . BASE_URL . 'agent-orders.php');
         exit;
     } else {
         $_SESSION['error_message'] = $response->getMessage();
