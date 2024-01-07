@@ -70,7 +70,7 @@
                                 </li>
                             </ul>
                             <div class="buy">
-                                <a href="" class="btn btn-primary">
+                                <a href="<?php echo BASE_URL; ?>agent-payment" class="btn btn-primary">
                                     Choose Plan
                                 </a>
                             </div>
