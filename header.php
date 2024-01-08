@@ -1,8 +1,13 @@
 <?php
 ob_start();
 session_start();
-
 include 'config/config.php';
+
+$cur_page = substr($_SERVER["SCRIPT_NAME"], strrpos($_SERVER["SCRIPT_NAME"], "/") + 1);
+if ($cur_page == 'agent-payment.php' || $cur_page == 'agent-paypal-success.php') {
+    include 'config/config_paypal.php';
+}
+
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -10,7 +15,6 @@ use PHPMailer\PHPMailer\Exception;
 
 require 'vendor/autoload.php';
 
-$cur_page = substr($_SERVER["SCRIPT_NAME"], strrpos($_SERVER["SCRIPT_NAME"], "/") + 1);
 
 ?>
 
