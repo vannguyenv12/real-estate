@@ -1186,6 +1186,11 @@ p {
   height: 450px;
 }
 
+.map1 iframe {
+  width: 100%;
+  height: 300px;
+}
+
 @media (max-width: 1199px) {
   .map iframe {
     height: 400px;
