@@ -8,6 +8,14 @@ if (isset($_POST['form_submit'])) {
             throw new Exception("Name can not be empty");
         }
 
+        $statement = $pdo->prepare("SELECT * FROM amenities WHERE name=?");
+        $statement->execute([$_POST['name']]);
+        $total = $statement->rowCount();
+
+        if ($total) {
+            throw new Exception("Name already exist!");
+        }
+
         $statement = $pdo->prepare("INSERT INTO amenities 
                                 (
                                 name

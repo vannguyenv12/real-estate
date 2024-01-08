@@ -7,12 +7,29 @@ if (isset($_POST['form_submit'])) {
         if ($_POST['name'] == "") {
             throw new Exception("Name can not be empty");
         }
+
+        $statement = $pdo->prepare("SELECT * FROM locations WHERE name=? AND id != ?");
+        $statement->execute([$_POST['name'], $_REQUEST['id']]);
+        $total = $statement->rowCount();
+
+        if ($total) {
+            throw new Exception("Name already exist!");
+        }
+
         if ($_POST['slug'] == "") {
             throw new Exception("Slug can not be empty");
         }
 
         if (!preg_match('/^[a-z][-a-z0-9]*$/', $_POST['slug'])) {
             throw new Exception("The slug is invalid");
+        }
+
+        $statement = $pdo->prepare("SELECT * FROM locations WHERE slug=? AND id != ?");
+        $statement->execute([$_POST['slug'], $_REQUEST['id']]);
+        $total = $statement->rowCount();
+
+        if ($total) {
+            throw new Exception("Slug already exist!");
         }
 
         // Update photo
