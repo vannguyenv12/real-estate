@@ -15,6 +15,14 @@ if (isset($_POST['form_update'])) {
             throw new Exception("Email is invalid");
         }
 
+        $statement = $pdo->prepare("SELECT * FROM agents WHERE email=? AND id != ?");
+        $statement->execute([$_POST['email'], $_SESSION['agent']['id']]);
+        $total = $statement->rowCount();
+
+        if ($total) {
+            throw new Exception("Email already exist, please try another email!");
+        }
+
         $statement = $pdo->prepare("UPDATE agents SET 
                                     full_name=?, 
                                     email=?,

@@ -24,6 +24,16 @@ if (isset($_POST['form_submit'])) {
             throw new Exception("Password can not be empty");
         }
 
+        $statement = $pdo->prepare("SELECT * FROM agents WHERE email=?");
+        $statement->execute([$_POST['email']]);
+        $total = $statement->rowCount();
+
+        if ($total) {
+            throw new Exception("Email already exist, please try another email!");
+        }
+
+
+
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
         $token = time();
 
