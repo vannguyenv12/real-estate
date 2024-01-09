@@ -1,18 +1,29 @@
 <?php include 'layouts/top.php'; ?>
 
 <?php
-$statement = $pdo->prepare("SELECT * FROM types WHERE id=?");
-$statement->execute([$_REQUEST['id']]);
-$result = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-unlink('../uploads/' . $result[0]['photo']);
+try {
+    $statement = $pdo->prepare("SELECT * FROM properties WHERE type_id = ?");
+    $statement->execute([$_REQUEST['id']]);
+    $total = $statement->rowCount();
 
-$statement = $pdo->prepare("DELETE FROM types WHERE id=?");
-$statement->execute([$_REQUEST['id']]);
+    if ($total) {
+        throw new Exception("You can't delete this type, because one or more properties exit.");
+    }
 
-$success_message = "Type has been deleted successfully!";
-$_SESSION['success_message'] = $success_message;
+    $statement = $pdo->prepare("DELETE FROM types WHERE id=?");
+    $statement->execute([$_REQUEST['id']]);
 
-header('location: ' . ADMIN_URL . 'type-view.php');
-exit;
+    $success_message = "Type has been deleted successfully!";
+    $_SESSION['success_message'] = $success_message;
+
+    header('location: ' . ADMIN_URL . 'type-view.php');
+    exit;
+} catch (Exception $e) {
+    $error_message = $e->getMessage();
+    $_SESSION['error_message'] = $error_message;
+    header('location: ' . ADMIN_URL . 'type-view.php');
+    exit;
+}
+
 ?>
