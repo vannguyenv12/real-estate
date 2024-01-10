@@ -1,1 +1,4 @@
-./vendor
+vendor
+uploads/*
+_help_general.txt
+_help_payment.txt
