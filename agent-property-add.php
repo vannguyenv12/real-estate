@@ -1,51 +1,51 @@
 <?php include 'header.php'; ?>
 
-<!-- <?php
-        if (!isset($_SESSION['agent'])) {
-            header('location: ' . BASE_URL . 'agent-login');
-            exit;
-        }
+<?php
+if (!isset($_SESSION['agent'])) {
+    header('location: ' . BASE_URL . 'agent-login');
+    exit;
+}
 
-        // If this agent did not purchase any package, he will be redirected to payment page
-        $statement = $pdo->prepare("SELECT * FROM orders WHERE agent_id=?");
-        $statement->execute(array($_SESSION['agent']['id']));
-        $total = $statement->rowCount();
-        if (!$total) {
-            $_SESSION['error_message'] = 'Please purchase a package first';
-            header('location: ' . BASE_URL . 'agent-payment');
-            exit;
-        }
+// If this agent did not purchase any package, he will be redirected to payment page
+$statement = $pdo->prepare("SELECT * FROM orders WHERE agent_id=?");
+$statement->execute(array($_SESSION['agent']['id']));
+$total = $statement->rowCount();
+if (!$total) {
+    $_SESSION['error_message'] = 'Please purchase a package first';
+    header('location: ' . BASE_URL . 'agent-payment');
+    exit;
+}
 
-        // If this agent already added his maximum number of allowed properties, he will be redirected to the properties view page and any of the added properties should be removed in order to add a new one.
-        $statement = $pdo->prepare("SELECT * 
+// If this agent already added his maximum number of allowed properties, he will be redirected to the properties view page and any of the added properties should be removed in order to add a new one.
+$statement = $pdo->prepare("SELECT * 
                             FROM orders 
                             JOIN packages
                             ON orders.package_id = packages.id
                             WHERE orders.agent_id=? AND orders.currently_active=?");
-        $statement->execute(array($_SESSION['agent']['id'], 1));
-        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($result as $row) {
-            $allowed_properties = $row['allowed_properties'];
-            $expire_date = $row['expire_date'];
-        }
+$statement->execute(array($_SESSION['agent']['id'], 1));
+$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+foreach ($result as $row) {
+    $allowed_properties = $row['allowed_properties'];
+    $expire_date = $row['expire_date'];
+}
 
-        $statement = $pdo->prepare("SELECT * FROM properties WHERE agent_id=?");
-        $statement->execute(array($_SESSION['agent']['id']));
-        $total_properties = $statement->rowCount();
-        if ($total_properties == $allowed_properties) {
-            $_SESSION['error_message'] = 'You have already added your maximum number of allowed properties. Please remove any of the added properties in order to add a new one.';
-            header('location: ' . BASE_URL . 'agent-properties');
-            exit;
-        }
+$statement = $pdo->prepare("SELECT * FROM properties WHERE agent_id=?");
+$statement->execute(array($_SESSION['agent']['id']));
+$total_properties = $statement->rowCount();
+if ($total_properties == $allowed_properties) {
+    $_SESSION['error_message'] = 'You have already added your maximum number of allowed properties. Please remove any of the added properties in order to add a new one.';
+    header('location: ' . BASE_URL . 'agent-properties');
+    exit;
+}
 
 
-        // If the expire date is passed, the agent will be redirected to the payment page
-        if (strtotime(date('Y-m-d')) > strtotime($expire_date)) {
-            $_SESSION['error_message'] = 'Your package is expired. Please purchase a new package.';
-            header('location: ' . BASE_URL . 'agent-payment');
-            exit;
-        }
-        ?> -->
+// If the expire date is passed, the agent will be redirected to the payment page
+if (strtotime(date('Y-m-d')) > strtotime($expire_date)) {
+    $_SESSION['error_message'] = 'Your package is expired. Please purchase a new package.';
+    header('location: ' . BASE_URL . 'agent-payment');
+    exit;
+}
+?>
 
 <?php
 if (isset($_POST['form_submit'])) {

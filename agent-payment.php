@@ -14,9 +14,22 @@ if (isset($_POST['form_paypal'])) {
         $statement->execute([$_POST['package_id']]);
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         foreach ($result as $row) {
+            $allowed_properties = $row['allowed_properties'];
             $_SESSION['package_id'] = $row['id'];
             $_SESSION['price'] = $row['price'];
             $_SESSION['allowed_days'] = $row['allowed_days'];
+        }
+        $statement = $pdo->prepare("SELECT * FROM properties WHERE agent_id = ?");
+        $statement->execute([$_SESSION['agent']['id']]);
+        $total_properties = $statement->rowCount();
+
+        if ($allowed_properties != -1) {
+            if ($total_properties > $allowed_properties) {
+                unset($_SESSION['package_id']);
+                unset($_SESSION['price']);
+                unset($_SESSION['allowed_days']);
+                throw new Exception('You are going to downgrade the package. Please delete some properties first');
+            }
         }
 
         $response = $gateway->purchase(array(
@@ -31,7 +44,9 @@ if (isset($_POST['form_paypal'])) {
             echo $response->getMessage();
         }
     } catch (Exception $e) {
-        echo $e->getMessage();
+        $_SESSION['error_message'] = $e->getMessage();
+        header('location: ' . BASE_URL . 'agent-payment');
+        exit;
     }
 }
 ?>

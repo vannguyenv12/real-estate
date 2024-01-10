@@ -10,6 +10,26 @@ $result = $statement->fetchAll(PDO::FETCH_ASSOC);
 <?php
 if (isset($_POST['form_submit'])) {
     try {
+        // If this agent already added his maximum number of allowed properties, he will be redirected to the properties view page and any of the added properties should be removed in order to add a new one.
+        $statement = $pdo->prepare("SELECT * 
+                                    FROM orders 
+                                    JOIN packages
+                                    ON orders.package_id = packages.id
+                                    WHERE orders.agent_id=? AND orders.currently_active=?");
+
+        $statement->execute(array($_SESSION['agent']['id'], 1));
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($result as $row) {
+            $allowed_photos = $row['allowed_photos'];
+            $expire_date = $row['expire_date'];
+        }
+
+        $statement = $pdo->prepare("SELECT * FROM property_photos WHERE property_id=?");
+        $statement->execute(array($_REQUEST['id']));
+        $total_photos = $statement->rowCount();
+        if ($total_photos == $allowed_photos) {
+            throw new Exception('You have already added your maximum number of allowed photos. Please remove any of photo in order to add a new one.');
+        }
 
         // Update photo
         $path = $_FILES['photo']['name'];

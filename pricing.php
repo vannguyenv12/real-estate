@@ -20,12 +20,17 @@
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($result as $row) {
+
+
                 if ($row['allowed_featured_properties'] == 0) {
                     $symbol1 = 'fas fa-times';
                     $number1 = 'No';
                 } else {
                     $symbol1 = 'fas fa-check';
                     $number1 = $row['allowed_featured_properties'];
+                    if ($number1 == -1) {
+                        $number1 = 'Unlimited';
+                    }
                 }
 
                 if ($row['allowed_photos'] == 0) {
@@ -34,6 +39,9 @@
                 } else {
                     $symbol2 = 'fas fa-check';
                     $number2 = $row['allowed_photos'];
+                    if ($number2 == -1) {
+                        $number2 = 'Unlimited';
+                    }
                 }
 
                 if ($row['allowed_videos'] == 0) {
@@ -42,6 +50,9 @@
                 } else {
                     $symbol3 = 'fas fa-check';
                     $number3 = $row['allowed_videos'];
+                    if ($number2 == -1) {
+                        $number2 = 'Unlimited';
+                    }
                 }
 
             ?>
@@ -54,7 +65,10 @@
                             <hr />
                             <ul class="fa-ul">
                                 <li>
-                                    <span class="fa-li"><i class="fas fa-check"></i></span>5 Properties Allowed
+                                    <span class="fa-li"><i class="fas fa-check"></i></span>
+                                    <?php if ($row['allowed_properties'] == -1) {
+                                        echo 'Unlimited';
+                                    } else echo $row['allowed_properties']; ?> Properties Allowed
                                 </li>
                                 <li>
                                     <span class="fa-li"><i class="<?php echo $symbol1; ?>"></i></span>

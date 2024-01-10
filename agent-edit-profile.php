@@ -1,6 +1,12 @@
 <?php include 'header.php'; ?>
 
 <?php
+if (!isset($_SESSION['agent'])) {
+    header('location:' . BASE_URL . 'agent-login');
+}
+?>
+
+<?php
 if (isset($_POST['form_update'])) {
     try {
         if ($_POST['full_name'] == '') {

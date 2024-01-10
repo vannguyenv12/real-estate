@@ -1,18 +1,28 @@
 <?php include 'layouts/top.php'; ?>
 
 <?php
-$statement = $pdo->prepare("SELECT * FROM amenities WHERE id=?");
-$statement->execute([$_REQUEST['id']]);
-$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+try {
 
-unlink('../uploads/' . $result[0]['photo']);
+    $statement = $pdo->prepare("SELECT * FROM properties WHERE FIND_IN_SET(?, amenities) > 0");
+    $statement->execute([$_REQUEST['id']]);
+    $total = $statement->rowCount();
 
-$statement = $pdo->prepare("DELETE FROM amenities WHERE id=?");
-$statement->execute([$_REQUEST['id']]);
+    if ($total) {
+        throw new Exception("This amenity is used in properties. It can't be deleted!");
+    }
 
-$success_message = "Amenity has been deleted successfully!";
-$_SESSION['success_message'] = $success_message;
+    $statement = $pdo->prepare("DELETE FROM amenities WHERE id=?");
+    $statement->execute([$_REQUEST['id']]);
 
-header('location: ' . ADMIN_URL . 'amenity-view.php');
-exit;
+    $success_message = "Amenity has been deleted successfully!";
+    $_SESSION['success_message'] = $success_message;
+
+    header('location: ' . ADMIN_URL . 'amenity-view.php');
+    exit;
+} catch (Exception $e) {
+    $error_message = $e->getMessage();
+    $_SESSION['error_message'] = $error_message;
+    header('location: ' . ADMIN_URL . 'amenity-view.php');
+    exit;
+}
 ?>
