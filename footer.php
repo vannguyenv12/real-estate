@@ -114,6 +114,8 @@
     <i class="fas fa-angle-up"></i>
 </div>
 
+
+
 <script src="<?php echo BASE_URL; ?>js/custom.js"></script>
 
 <?php if (isset($error_message)) : ?>
@@ -145,6 +147,17 @@
         })
     </script>
     <?php unset($_SESSION['success_message']); ?>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['error_message'])) : ?>
+    <script>
+        iziToast.show({
+            message: '<?php echo $_SESSION['error_message'] ?>',
+            position: 'topRight',
+            color: 'red'
+        })
+    </script>
+    <?php unset($_SESSION['error_message']); ?>
 <?php endif; ?>
 
 </body>
