@@ -1,11 +1,19 @@
 <?php include 'header.php'; ?>
 
 <?php
+
+if (!empty($_GET['name'])) {
+    $property_name = '%' . $_GET['name'] . '%';
+    $c_name = ' AND p.name LIKE\'' . $property_name . '\'';
+} else {
+    $c_name = '';
+}
+
 if (!empty($_GET['location_id'])) {
     if ($_GET['location_id'] == 'All Locations') {
         $c_location_id = '';
     } else {
-        $c_location_id = 'AND location_id=' . $_GET['location_id'];
+        $c_location_id = ' AND location_id=' . $_GET['location_id'];
     }
 } else {
     $c_location_id = '';
@@ -15,7 +23,7 @@ if (!empty($_GET['type_id'])) {
     if ($_GET['type_id'] == 'All Types') {
         $c_type_id = '';
     } else {
-        $c_type_id = 'AND type_id=' . $_GET['type_id'];
+        $c_type_id = ' AND type_id=' . $_GET['type_id'];
     }
 } else {
     $c_type_id = '';
@@ -25,7 +33,7 @@ if (!empty($_GET['amenity_id'])) {
     if ($_GET['amenity_id'] == 'All Amenities') {
         $c_amenity_id = '';
     } else {
-        $c_amenity_id = 'AND FIND_IN_SET("' . $_GET['amenity_id'] . '", amenities) > 0';
+        $c_amenity_id = ' AND FIND_IN_SET("' . $_GET['amenity_id'] . '", amenities) > 0';
     }
 } else {
     $c_amenity_id = '';
@@ -45,7 +53,7 @@ if (!empty($_GET['bathrooms'])) {
     if ($_GET['bathrooms'] == 'All Bathrooms') {
         $c_bathrooms = '';
     } else {
-        $c_bathrooms = 'AND bathrooms=' . $_GET['bathrooms'];
+        $c_bathrooms = ' AND bathrooms=' . $_GET['bathrooms'];
     }
 } else {
     $c_bathrooms = '';
@@ -55,10 +63,32 @@ if (!empty($_GET['bedrooms'])) {
     if ($_GET['bedrooms'] == 'All Bedrooms') {
         $c_bedrooms = '';
     } else {
-        $c_bedrooms = 'AND bedrooms=' . $_GET['bedrooms'];
+        $c_bedrooms = ' AND bedrooms=' . $_GET['bedrooms'];
     }
 } else {
     $c_bedrooms = '';
+}
+
+if (!empty($_GET['price'])) {
+    if ($_GET['price'] == 'All Prices') {
+        $c_price = '';
+    } else {
+        list($minPrice, $maxPrice) = explode('-', $_GET['price']);
+        $c_price = ' AND price >= ' . $minPrice . ' AND price <= ' . $maxPrice;
+    }
+} else {
+    $c_price = '';
+}
+
+if (!empty($_GET['price'])) {
+    if ($_GET['price'] == 'All Prices') {
+        $c_price = '';
+    } else {
+        list($minPrice, $maxPrice) = explode('-', $_GET['price']);
+        $c_price = ' AND price >= ' . $minPrice . ' AND price <= ' . $maxPrice;
+    }
+} else {
+    $c_price = '';
 }
 ?>
 
@@ -84,7 +114,9 @@ if (!empty($_GET['bedrooms'])) {
 
                         <div class="widget">
                             <h2>Find Anything</h2>
-                            <input type="text" name="" class="form-control" placeholder="Search Titles ..." />
+                            <input type="text" name="name" value="<?php if (isset($_GET['name'])) {
+                                                                        echo $_GET['name'];
+                                                                    } ?>" class="form-control" placeholder="Search Property Name ..." />
                         </div>
 
                         <div class="widget">
@@ -210,30 +242,43 @@ if (!empty($_GET['bedrooms'])) {
                         </div>
 
                         <div class="widget">
-                            <h2>Min Price</h2>
-                            <select name="" class="form-control select2">
-                                <option value="">--- Select ---</option>
-                                <option value="">500</option>
-                                <option value="">1000</option>
-                                <option value="">2000</option>
-                                <option value="">3000</option>
-                                <option value="">5000</option>
-                                <option value="">10000</option>
+                            <h2>Price</h2>
+                            <select name="price" class="form-control select2" onchange="this.form.submit();">
+                                <option value="">All Prices</option>
+                                <option value="1-5000" <?php if (isset($_GET['price'])) {
+                                                            if ($_GET['price'] == '1-5000') {
+                                                                echo 'selected';
+                                                            }
+                                                        } ?>>$1-$5000</option>
+                                <option value="5001-10000" <?php if (isset($_GET['price'])) {
+                                                                if ($_GET['price'] == '5001-10000') {
+                                                                    echo 'selected';
+                                                                }
+                                                            } ?>>$5001 - $10000</option>
+                                <option value="10001-20000" <?php if (isset($_GET['price'])) {
+                                                                if ($_GET['price'] == '10001-20000') {
+                                                                    echo 'selected';
+                                                                }
+                                                            } ?>>$10001 - $20000</option>
+                                <option value="20001-50000" <?php if (isset($_GET['price'])) {
+                                                                if ($_GET['price'] == '20001-50000') {
+                                                                    echo 'selected';
+                                                                }
+                                                            } ?>>$20001 - $50000</option>
+                                <option value="50001-100000" <?php if (isset($_GET['price'])) {
+                                                                    if ($_GET['price'] == '50001-100000') {
+                                                                        echo 'selected';
+                                                                    }
+                                                                } ?>>$500000 - $100000</option>
+                                <option value="100001-500000" <?php if (isset($_GET['price'])) {
+                                                                    if ($_GET['price'] == '100001-500000') {
+                                                                        echo 'selected';
+                                                                    }
+                                                                } ?>>$100001 - $500000</option>
                             </select>
                         </div>
 
-                        <div class="widget">
-                            <h2>Max Price</h2>
-                            <select name="" class="form-control select2">
-                                <option value="">--- Select ---</option>
-                                <option value="">500</option>
-                                <option value="">1000</option>
-                                <option value="">2000</option>
-                                <option value="">3000</option>
-                                <option value="">5000</option>
-                                <option value="">10000</option>
-                            </select>
-                        </div>
+
 
                         <div class="filter-button">
                             <input type="hidden" name="p" value="1">
@@ -249,7 +294,8 @@ if (!empty($_GET['bedrooms'])) {
                             <?php
 
                             $query = '';
-                            $query = $c_location_id . $c_type_id . $c_amenity_id . $c_purpose . $c_bedrooms . $c_bathrooms;
+                            $query = $c_name . $c_location_id . $c_type_id . $c_amenity_id .
+                                $c_purpose . $c_bedrooms . $c_bathrooms . $c_price;
                             $per_page = 6;
                             $q = $pdo->prepare("SELECT p.*, l.name as location_name, t.name as type_name, a.full_name, a.photo
                                                 FROM properties p
@@ -354,8 +400,16 @@ if (!empty($_GET['bedrooms'])) {
 
                             if ($total_rows) :
 
-                                $common_url_part = BASE_URL . 'properties.php?location_id=' . $_GET['location_id'] . '&type_id='
-                                    . $_GET['type_id'];
+                                $common_url_part = BASE_URL
+                                    . 'properties.php?name=' . $_GET['name']
+                                    . '&location_id=' . $_GET['location_id']
+                                    . '&type_id=' . $_GET['type_id']
+                                    . '&amenity_id=' . $_GET['amenity_id']
+                                    . '&purpose=' . $_GET['purpose']
+                                    . '&bedrooms=' . $_GET['bedrooms']
+                                    . '&bathrooms=' . $_GET['bathrooms']
+                                    . '&price=' . $_GET['price'];
+
 
                             ?> <div class="col-md-12"> <?php
 

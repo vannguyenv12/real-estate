@@ -16,9 +16,9 @@
                             <div class="inner">
                                 <div class="row">
                                     <div class="col-lg-3">
-                                        <!-- <div class="form-group">
+                                        <div class="form-group">
                                             <input type="text" name="name" class="form-control" placeholder="Property Name">
-                                        </div> -->
+                                        </div>
                                     </div>
                                     <div class="col-lg-3">
                                         <div class="form-group">
@@ -62,6 +62,11 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
+                                        <input type="hidden" name="amenity_id" value="">
+                                        <input type="hidden" name="purpose" value="">
+                                        <input type="hidden" name="bedrooms" value="">
+                                        <input type="hidden" name="bathrooms" value="">
+                                        <input type="hidden" name="price" value="">
                                         <input type="hidden" name="p" value="1">
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-search"></i>
