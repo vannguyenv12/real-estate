@@ -154,12 +154,12 @@ if (!$total) {
                                                             <div class="col-md-8">$<?php echo $row['price']; ?></div>
                                                         </div>
                                                         <div class="form-group row bdb1 pt_10 mb_0">
-                                                            <div class="col-md-4"><label class="form-label">Bedroom: </label></div>
-                                                            <div class="col-md-8"><?php echo $row['bedroom']; ?></div>
+                                                            <div class="col-md-4"><label class="form-label">bedrooms: </label></div>
+                                                            <div class="col-md-8"><?php echo $row['bedrooms']; ?></div>
                                                         </div>
                                                         <div class="form-group row bdb1 pt_10 mb_0">
-                                                            <div class="col-md-4"><label class="form-label">Bathroom: </label></div>
-                                                            <div class="col-md-8"><?php echo $row['bathroom']; ?></div>
+                                                            <div class="col-md-4"><label class="form-label">bathrooms: </label></div>
+                                                            <div class="col-md-8"><?php echo $row['bathrooms']; ?></div>
                                                         </div>
                                                         <div class="form-group row bdb1 pt_10 mb_0">
                                                             <div class="col-md-4"><label class="form-label">size: </label></div>

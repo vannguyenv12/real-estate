@@ -780,7 +780,7 @@ p {
 }
 .agent-detail .photo img {
   width: 150px;
-  height: 150px;
+  height: 150px !important;
   border-radius: 50%;
   height: auto;
 }
@@ -2075,29 +2075,89 @@ h4.resume {
 .main-part-user h3 a {
   font-size: 20px;
 }
-
 .left-part-user {
   width: 300px;
   display: inline-block;
-  background: #70bde7;
+  background: #b7cbff;
   padding: 30px;
   margin: 0 20px;
 }
-
 .left-part-user a {
-  color: #0e2982;
+  color: #2657ab;
   text-decoration: underline;
 }
-
 .right-part-user {
   width: 300px;
   display: inline-block;
-  background: #bbff87;
+  background: #acf7c8;
   padding: 30px;
   margin: 0 20px;
 }
-
 .right-part-user a {
-  color: #478517;
+  color: #1e8130;
   text-decoration: underline;
+}
+
+.custom-delete-button {
+  border: 0;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+a.links {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  display: inline-block;
+  text-decoration: none;
+  background: lightblue;
+  color: #000;
+  font-size: 20px;
+  margin-right: 5px;
+  margin-bottom: 20px;
+}
+a.links_gray {
+  background: #ddd;
+}
+
+.message-heading {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  margin-top: 30px;
+}
+.message-item {
+  margin-bottom: 40px;
+  padding: 15px;
+  border: 1px solid #7b7b7b;
+}
+.message-item-main {
+  background: #e1e5f7;
+}
+.message-top .photo {
+  display: inline-block;
+  vertical-align: middle;
+}
+.message-top .photo img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+.message-top .text {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
+}
+.message-top .text h6 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.message-top .text p {
+  margin-bottom: 0;
+  color: #838383;
+}
+.message-bottom {
+  margin-top: 20px;
 }

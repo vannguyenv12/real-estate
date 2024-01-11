@@ -12,18 +12,18 @@
                         </p>
                     </div>
                     <div class="search-section">
-                        <form action="" method="post">
+                        <form action="<?php echo BASE_URL; ?>properties.php" method="get">
                             <div class="inner">
                                 <div class="row">
                                     <div class="col-lg-3">
-                                        <div class="form-group">
-                                            <input type="text" name="" class="form-control" placeholder="Find Anything ...">
-                                        </div>
+                                        <!-- <div class="form-group">
+                                            <input type="text" name="name" class="form-control" placeholder="Property Name">
+                                        </div> -->
                                     </div>
                                     <div class="col-lg-3">
                                         <div class="form-group">
-                                            <select name="" class="form-select select2">
-                                                <option value="">Select Location</option>
+                                            <select name="location_id" class="form-select select2">
+                                                <option value="">All Locations</option>
 
                                                 <?php
 
@@ -32,7 +32,7 @@
                                                 $result = $statement->fetchAll(PDO::FETCH_ASSOC);
                                                 foreach ($result as $row) {
                                                 ?>
-                                                    <option value=""><?php echo $row['name']; ?></option>
+                                                    <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
                                                 <?php
                                                 }
 
@@ -43,8 +43,8 @@
                                     </div>
                                     <div class="col-lg-3">
                                         <div class="form-group">
-                                            <select name="" class="form-select select2">
-                                                <option value="">Select Type</option>
+                                            <select name="type_id" class="form-select select2">
+                                                <option value="">All Types</option>
                                                 <?php
 
                                                 $statement = $pdo->prepare("SELECT * FROM types ORDER BY name ASC");
@@ -52,7 +52,7 @@
                                                 $result = $statement->fetchAll(PDO::FETCH_ASSOC);
                                                 foreach ($result as $row) {
                                                 ?>
-                                                    <option value=""><?php echo $row['name']; ?></option>
+                                                    <option value="<?php echo $row['id']; ?>"><?php echo $row['name']; ?></option>
                                                 <?php
                                                 }
 
@@ -62,6 +62,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
+                                        <input type="hidden" name="p" value="1">
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-search"></i>
                                             Search
@@ -137,8 +138,8 @@
                                 <div class="detail">
                                     <div class="stat">
                                         <div class="i1"><?php echo $row['size'] ?> sqft</div>
-                                        <div class="i2"><?php echo $row['bedroom'] ?> Bed</div>
-                                        <div class="i3"><?php echo $row['bathroom'] ?> Bath</div>
+                                        <div class="i2"><?php echo $row['bedrooms'] ?> Bed</div>
+                                        <div class="i3"><?php echo $row['bathrooms'] ?> Bath</div>
                                     </div>
                                     <div class="address">
                                         <i class="fas fa-map-marker-alt"></i> <?php echo $row['address'] ?>

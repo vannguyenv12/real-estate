@@ -65,11 +65,11 @@ if (isset($_POST['form_submit'])) {
         if ($_POST['description'] == '') {
             throw new Exception('Description can not be empty');
         }
-        if ($_POST['bedroom'] == '') {
-            throw new Exception('Bedroom can not be empty');
+        if ($_POST['bedrooms'] == '') {
+            throw new Exception('bedrooms can not be empty');
         }
-        if ($_POST['bathroom'] == '') {
-            throw new Exception('Bathroom can not be empty');
+        if ($_POST['bathrooms'] == '') {
+            throw new Exception('bathrooms can not be empty');
         }
         if ($_POST['size'] == '') {
             throw new Exception('Size can not be empty');
@@ -159,8 +159,8 @@ if (isset($_POST['form_submit'])) {
                                 featured_photo,
                                 price,
                                 purpose,
-                                bedroom,
-                                bathroom,
+                                bedrooms,
+                                bathrooms,
                                 size,
                                 floor,
                                 garage,
@@ -185,8 +185,8 @@ if (isset($_POST['form_submit'])) {
             $filename,
             $_POST['price'],
             $_POST['purpose'],
-            $_POST['bedroom'],
-            $_POST['bathroom'],
+            $_POST['bedrooms'],
+            $_POST['bathrooms'],
             $_POST['size'],
             $_POST['floor'],
             $_POST['garage'],
@@ -312,14 +312,14 @@ if (isset($_POST['form_submit'])) {
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="" class="form-label">Bedrooms *</label>
-                            <input type="number" name="bedroom" class="form-control" min="0" value="<?php if (isset($_POST['bedroom'])) {
-                                                                                                        echo $_POST['bedroom'];
-                                                                                                    } ?>">
+                            <input type="number" name="bedrooms" class="form-control" min="0" value="<?php if (isset($_POST['bedrooms'])) {
+                                                                                                            echo $_POST['bedrooms'];
+                                                                                                        } ?>">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="" class="form-label">Bathrooms *</label>
-                            <input type="number" name="bathroom" class="form-control" min="0" value="<?php if (isset($_POST['bathroom'])) {
-                                                                                                            echo $_POST['bathroom'];
+                            <input type="number" name="bathrooms" class="form-control" min="0" value="<?php if (isset($_POST['bathrooms'])) {
+                                                                                                            echo $_POST['bathrooms'];
                                                                                                         } ?>">
                         </div>
                         <div class="col-md-4 mb-3">
