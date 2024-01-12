@@ -1,4 +1,17 @@
 <?php include 'header.php'; ?>
+
+<?php
+$allowed_agents = [];
+$q = $pdo->prepare("SELECT agent_id FROM orders WHERE expire_date >= CURDATE() AND currently_active=?");
+$q->execute([1]);
+$result = $q->fetchAll();
+foreach ($result as $row) {
+    $allowed_agents[] = $row['agent_id'];
+}
+$agent_list = implode(',', $allowed_agents);
+?>
+
+
 <div class="slider" style="background-image: url(<?php echo BASE_URL; ?>uploads/banner-home.jpg)">
     <div class="bg"></div>
     <div class="container">
@@ -105,10 +118,17 @@
                                         ON p.type_id = t.id
                                         JOIN agents a
                                         ON p.agent_id = a.id
-                                        WHERE p.is_featured=?
+                                        WHERE p.is_featured=? AND p.agent_id NOT IN (
+                                            SELECT a.id
+                                            FROM agents a
+                                            JOIN orders o
+                                            ON a.id = o.agent_id
+                                            WHERE o.expire_date < ? AND o.currently_active = ?
+                                        )
                                         LIMIT 6
                                         ");
-            $statement->execute(['Yes']);
+            $statement->execute(['Yes', date('Y-m-d'), 1]);
+
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);
             $total = $statement->rowCount();
 
@@ -251,103 +271,38 @@
                 </div>
             </div>
         </div>
+
+        <!-- Agent -->
         <div class="row">
-            <div class="col-lg-3 col-md-3">
-                <div class="item">
-                    <div class="photo">
-                        <a href=""><img src="uploads/agent1.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2>
-                            <a href="agent.html">Michael Wyatt</a>
-                        </h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3">
-                <div class="item">
-                    <div class="photo">
-                        <a href=""><img src="uploads/agent2.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2>
-                            <a href="agent.html">Jason Schwartz</a>
-                        </h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3">
-                <div class="item">
-                    <div class="photo">
-                        <a href=""><img src="uploads/agent3.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2>
-                            <a href="agent.html">Joshua Lash</a>
-                        </h2>
+            <?php
+            $statement = $pdo->prepare("SELECT *
+                                        FROM agents 
+                                        WHERE status = ? AND id in ($agent_list) LIMIT 8");
+            $statement->execute([1]);
+            $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($result as $row) {
+            ?>
+                <div class="col-lg-3 col-md-3">
+                    <div class="item">
+                        <div class="photo">
+                            <a href="<?php echo BASE_URL; ?>agent/<?php echo $row['id']; ?>">
+                                <?php if ($row['photo'] == '') : ?>
+                                    <img src="<?php BASE_URL; ?>uploads/default.png" alt="">
+                                <?php else : ?>
+                                    <img src="<?php BASE_URL; ?>uploads/<?php echo $row['photo']; ?>" alt="">
+                                <?php endif; ?>
+                            </a>
+                        </div>
+                        <div class="text">
+                            <h2>
+                                <a href="<?php echo BASE_URL ?>agent/<?php echo $row['id'] ?>"><?php echo $row['full_name']; ?></a>
+                            </h2>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-3">
-                <div class="item">
-                    <div class="photo">
-                        <a href=""><img src="uploads/agent4.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2>
-                            <a href="agent.html">Eric Williams</a>
-                        </h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3">
-                <div class="item">
-                    <div class="photo">
-                        <a href=""><img src="uploads/agent5.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2>
-                            <a href="agent.html">Jay Smith</a>
-                        </h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3">
-                <div class="item">
-                    <div class="photo">
-                        <a href=""><img src="uploads/agent6.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2>
-                            <a href="agent.html">Joseph Commons</a>
-                        </h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3">
-                <div class="item">
-                    <div class="photo">
-                        <a href=""><img src="uploads/agent7.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2>
-                            <a href="agent.html">Richard Renner</a>
-                        </h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-3">
-                <div class="item">
-                    <div class="photo">
-                        <a href=""><img src="uploads/agent8.jpg" alt=""></a>
-                    </div>
-                    <div class="text">
-                        <h2>
-                            <a href="agent.html">Ryan Dingle</a>
-                        </h2>
-                    </div>
-                </div>
-            </div>
+            <?php
+            }
+            ?>
         </div>
     </div>
 </div>
@@ -369,14 +324,14 @@
         <div class="row">
             <?php
 
-            $statement = $pdo->prepare("SELECT l.id, l.name, l.slug, l.photo, COUNT(p.id) AS property_count 
-                                        FROM locations l 
-                                        LEFT JOIN properties p
-                                        ON l.id = p.location_id
-                                        GROUP BY l.id
-                                        HAVING property_count > 0
-                                        ORDER BY property_count DESC
-                                        LIMIT 8");
+            $statement = $pdo->prepare("SELECT l.id,l.name as location_name, l.photo as location_photo, l.slug as location_slug, COUNT(*) as location_count
+            FROM properties p
+            JOIN locations l
+            ON p.location_id = l.id
+            WHERE p.agent_id IN ($agent_list)
+            GROUP BY l.id,l.name, l.photo, l.slug
+            ORDER BY location_count DESC");
+
             $statement->execute();
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);
             foreach ($result as $row) {
@@ -384,14 +339,14 @@
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <div class="item">
                         <div class="photo">
-                            <a href="<?php echo BASE_URL; ?>location/<?php echo $row['slug'] ?>">
-                                <img src="<?php echo BASE_URL; ?>uploads/<?php echo $row['photo'] ?>" alt="">
+                            <a href="<?php echo BASE_URL; ?>location/<?php echo $row['location_slug'] ?>">
+                                <img src="<?php echo BASE_URL; ?>uploads/<?php echo $row['location_photo'] ?>" alt="">
                             </a>
                         </div>
 
                         <div class="text">
-                            <h2><a href="<?php echo BASE_URL; ?>location/<?php echo $row['slug'] ?>"><?php echo $row['name'] ?></a></h2>
-                            <h4>(<?php echo $row['property_count'] ?> Properties)</h4>
+                            <h2><a href="<?php echo BASE_URL; ?>location/<?php echo $row['location_slug'] ?>"><?php echo $row['location_name'] ?></a></h2>
+                            <h4>(<?php echo $row['location_count'] ?> Properties)</h4>
                         </div>
                     </div>
                 </div>

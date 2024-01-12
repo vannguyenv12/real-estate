@@ -87,7 +87,7 @@ require 'vendor/autoload.php';
                                 <a href="<?php echo BASE_URL ?>properties.php?name=&location_id=&type_id=&amenity_id=&purpose=&bedrooms=&bathrooms=&price=&p=1" class="nav-link">Properties</a>
                             </li>
                             <li class="nav-item">
-                                <a href="agents.html" class="nav-link">Agents</a>
+                                <a href="<?php echo BASE_URL; ?>agents/1" class="nav-link">Agents</a>
                             </li>
                             <li class="nav-item">
                                 <a href="<?php echo BASE_URL ?>locations" class="nav-link">Locations</a>

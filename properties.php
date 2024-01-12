@@ -305,8 +305,15 @@ if (!empty($_GET['price'])) {
                                                 ON p.type_id = t.id
                                                 JOIN agents a
                                                 ON p.agent_id = a.id
-                                                WHERE 1 = 1 " . $query . " ORDER BY p.is_featured DESC");
-                            $q->execute();
+                                                WHERE 1 = 1 " . $query . " AND p.agent_id NOT IN (
+                                                    SELECT a.id
+                                                    FROM agents a
+                                                    JOIN orders o
+                                                    ON a.id = o.agent_id
+                                                    WHERE o.expire_date < ? AND o.currently_active = ?
+                                                ) 
+                                                ORDER BY p.is_featured DESC");
+                            $q->execute([date('Y-m-d'), 1]);
                             $total = $q->rowCount();
                             $total_pages = ceil($total / $per_page);
 
