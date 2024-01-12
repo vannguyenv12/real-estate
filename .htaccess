@@ -27,4 +27,6 @@ RewriteRule  ^agent-property-delete/(.*)$/?$     agent-property-delete.php?id=$1
 RewriteRule  ^agent-photo-gallery/(.*)$/?$     agent-photo-gallery.php?id=$1   [NC,L]
 RewriteRule  ^agent-video-gallery/(.*)$/?$     agent-video-gallery.php?id=$1   [NC,L]
 
+RewriteRule  ^location/(.*)$/?$     location.php?slug=$1   [NC,L]
+
 RewriteRule ^property/([0-9]+)/([^/]+)$ property.php?id=$1&slug=$2 [QSA,L]

@@ -369,7 +369,14 @@
         <div class="row">
             <?php
 
-            $statement = $pdo->prepare("SELECT * FROM locations ORDER BY name ASC");
+            $statement = $pdo->prepare("SELECT l.id, l.name, l.slug, l.photo, COUNT(p.id) AS property_count 
+                                        FROM locations l 
+                                        LEFT JOIN properties p
+                                        ON l.id = p.location_id
+                                        GROUP BY l.id
+                                        HAVING property_count > 0
+                                        ORDER BY property_count DESC
+                                        LIMIT 8");
             $statement->execute();
             $result = $statement->fetchAll(PDO::FETCH_ASSOC);
             foreach ($result as $row) {
@@ -377,11 +384,14 @@
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <div class="item">
                         <div class="photo">
-                            <a href="location.html"><img src="<?php echo BASE_URL; ?>uploads/<?php echo $row['photo'] ?>" alt=""></a>
+                            <a href="<?php echo BASE_URL; ?>location/<?php echo $row['slug'] ?>">
+                                <img src="<?php echo BASE_URL; ?>uploads/<?php echo $row['photo'] ?>" alt="">
+                            </a>
                         </div>
+
                         <div class="text">
-                            <h2><a href=""><?php echo $row['name'] ?></a></h2>
-                            <h4>(10 Properties)</h4>
+                            <h2><a href="<?php echo BASE_URL; ?>location/<?php echo $row['slug'] ?>"><?php echo $row['name'] ?></a></h2>
+                            <h4>(<?php echo $row['property_count'] ?> Properties)</h4>
                         </div>
                     </div>
                 </div>
