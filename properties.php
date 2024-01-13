@@ -367,7 +367,7 @@ if (!empty($_GET['price'])) {
                                                 <?php endif; ?>
                                             </div>
                                             <div class="price">$<?php echo $row['price'] ?></div>
-                                            <div class="wishlist"><a href=""><i class="far fa-heart"></i></a></div>
+                                            <div class="wishlist"><a href="<?php echo BASE_URL ?>customer-wishlist-add/<?php echo $row['id']; ?>"><i class="far fa-heart"></i></a></div>
                                         </div>
                                         <div class="text">
                                             <h3><a href="<?php echo BASE_URL; ?>property/<?php echo $row['id'] ?>/<?php echo $row['slug']; ?>"><?php echo $row['name']; ?></a></h3>

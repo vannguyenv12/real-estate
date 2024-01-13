@@ -142,7 +142,7 @@ $agent_list = implode(',', $allowed_agents);
                     <div class="col-lg-4 col-md-6 col-sm-12">
                         <div class="item">
                             <div class="photo">
-                                <img class="main" src="<?php echo BASE_URL; ?>uploads/property1.jpg" alt="">
+                                <img class="main" src="<?php echo BASE_URL; ?>uploads/<?php echo $row['featured_photo'] ?>" alt="">
                                 <div class="top">
                                     <div class="status-<?php if ($row['purpose'] == 'Rent') {
                                                             echo 'rent';
@@ -156,7 +156,11 @@ $agent_list = implode(',', $allowed_agents);
                                     </div>
                                 </div>
                                 <div class="price">$<?php echo $row['price'] ?></div>
-                                <div class="wishlist"><a href=""><i class="far fa-heart"></i></a></div>
+                                <div class="wishlist">
+                                    <a href="<?php echo BASE_URL ?>customer-wishlist-add/<?php echo $row['id']; ?>">
+                                        <i class="far fa-heart"></i>
+                                    </a>
+                                </div>
                             </div>
                             <div class="text">
                                 <h3><a href="<?php echo BASE_URL; ?>property/<?php echo $row['id'] ?>/<?php echo $row['slug']; ?>"><?php echo $row['name'] ?></a></h3>
