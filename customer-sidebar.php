@@ -5,8 +5,15 @@
                                     } ?>">
             <a href="<?php echo BASE_URL ?>customer-dashboard">Dashboard</a>
         </li>
-        <li class="list-group-item">
-            <a href="user-wishlist.html">Wishlist</a>
+        <li class="list-group-item" <?php if ($cur_page == 'customer-wishlist.php') {
+                                        echo 'active';
+                                    } ?>>
+            <a href="<?php echo BASE_URL; ?>customer-wishlist">Wishlist</a>
+        </li>
+        <li class="list-group-item" <?php if ($cur_page == 'customer-messages.php') {
+                                        echo 'active';
+                                    } ?>>
+            <a href="<?php echo BASE_URL; ?>customer-messages">Messages</a>
         </li>
         <li class="list-group-item <?php if ($cur_page == 'customer-edit-profile.php') {
                                         echo 'active';

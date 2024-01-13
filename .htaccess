@@ -8,6 +8,10 @@ RewriteRule  ^customer-dashboard$     customer-dashboard.php   [NC,L]
 RewriteRule  ^customer-wishlist$     customer-wishlist.php   [NC,L]
 RewriteRule  ^customer-logout$     customer-logout.php   [NC,L]
 RewriteRule  ^customer-edit-profile$     customer-edit-profile.php   [NC,L]
+RewriteRule  ^customer-messages$     customer-messages.php   [NC,L]
+RewriteRule  ^customer-message-create$     customer-message-create.php   [NC,L]
+
+
 RewriteRule  ^pricing$     pricing.php   [NC,L]
 RewriteRule  ^locations$     locations.php   [NC,L]
 
@@ -40,3 +44,5 @@ RewriteRule ^property/([0-9]+)/([^/]+)$ property.php?id=$1&slug=$2 [QSA,L]
 
 RewriteRule  ^customer-wishlist-add/(.*)$/?$     customer-wishlist-add.php?id=$1   [NC,L]
 RewriteRule  ^customer-wishlist-delete/(.*)$/?$     customer-wishlist-delete.php?id=$1   [NC,L]
+
+RewriteRule  ^customer-message/(.*)$/?$     customer-message.php?id=$1   [NC,L]
