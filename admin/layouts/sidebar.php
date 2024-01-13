@@ -23,7 +23,9 @@
                                                 $cur_page == 'amenity-view.php' ||
                                                 $cur_page == 'amenity-add.php' ||
                                                 $cur_page == 'amenity-edit.php' ||
-                                                $cur_page == 'property-view.php'
+                                                $cur_page == 'property-view.php' ||
+                                                $cur_page == 'order-view.php' ||
+                                                $cur_page == 'message-view.php'
 
                                             ) {
                                                 echo 'active';
@@ -45,6 +47,15 @@
                     <li class="<?php if ($cur_page == 'property-view.php') {
                                     echo 'active';
                                 } ?>"><a class="nav-link" href="<?php echo ADMIN_URL; ?>property-view.php"><i class="fas fa-angle-right"></i> Properties</a></li>
+
+                    <li class="<?php if ($cur_page == 'order-view.php') {
+                                    echo 'active';
+                                } ?>"><a class="nav-link" href="<?php echo ADMIN_URL; ?>order-view.php"><i class="fas fa-angle-right"></i> Orders</a></li>
+
+                    <li class="<?php if ($cur_page == 'message-view.php') {
+                                    echo 'active';
+                                } ?>"><a class="nav-link" href="<?php echo ADMIN_URL; ?>message-view.php"><i class="fas fa-angle-right"></i> Messages</a></li>
+
                 </ul>
             </li>
 
