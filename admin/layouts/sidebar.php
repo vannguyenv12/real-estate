@@ -22,7 +22,8 @@
                                                 $cur_page == 'type-edit.php' ||
                                                 $cur_page == 'amenity-view.php' ||
                                                 $cur_page == 'amenity-add.php' ||
-                                                $cur_page == 'amenity-edit.php'
+                                                $cur_page == 'amenity-edit.php' ||
+                                                $cur_page == 'property-view.php'
 
                                             ) {
                                                 echo 'active';
@@ -40,6 +41,10 @@
                     <li class="<?php if ($cur_page == 'amenity-view.php' || $cur_page == 'amenity-add.php' || $cur_page == 'amenity-edit.php') {
                                     echo 'active';
                                 } ?>"><a class="nav-link" href="<?php echo ADMIN_URL; ?>amenity-view.php"><i class="fas fa-angle-right"></i> Amenity</a></li>
+
+                    <li class="<?php if ($cur_page == 'property-view.php') {
+                                    echo 'active';
+                                } ?>"><a class="nav-link" href="<?php echo ADMIN_URL; ?>property-view.php"><i class="fas fa-angle-right"></i> Properties</a></li>
                 </ul>
             </li>
 
