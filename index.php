@@ -206,7 +206,7 @@ $agent_list = implode(',', $allowed_agents);
 </div>
 
 
-<div class="why-choose" style="background-image: url(uploads/why-choose.jpg)">
+<div class="why-choose" style="background-image: url(<?php echo BASE_URL; ?>uploads/why-choose.jpg)">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -219,45 +219,31 @@ $agent_list = implode(',', $allowed_agents);
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
-                <div class="inner">
-                    <div class="icon">
-                        <i class="fas fa-briefcase"></i>
-                    </div>
-                    <div class="text">
-                        <h2>Years of Experience</h2>
-                        <p>
-                            With decades of combined experience in the industry, our agents have the expertise and knowledge to provide you with a seamless home-buying experience.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="inner">
-                    <div class="icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div class="text">
-                        <h2>Competitive Prices</h2>
-                        <p>
-                            We understand that buying a home is a significant investment, which is why we strive to offer competitive prices to our clients.
-                        </p>
+            <?php
+            $statement = $pdo->prepare("SELECT * FROM why_choose_items ORDER BY id ASC");
+            $statement->execute();
+            $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+            $total = $statement->rowCount();
+            foreach ($result as $row) {
+            ?>
+                <div class="col-md-4">
+                    <div class="inner">
+                        <div class="icon">
+                            <i class="<?php echo $row['icon']; ?>"></i>
+                        </div>
+                        <div class="text">
+                            <h2><?php echo $row['heading']; ?></h2>
+                            <p>
+                                <?php echo $row['text']; ?>
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="inner">
-                    <div class="icon">
-                        <i class="fas fa-share-alt"></i>
-                    </div>
-                    <div class="text">
-                        <h2>Responsive Communication</h2>
-                        <p>
-                            Our responsive agents are here to answer your questions and address your concerns, ensuring a smooth and stress-free home-buying experience.
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <?php
+            }
+
+            ?>
+
         </div>
     </div>
 </div>
