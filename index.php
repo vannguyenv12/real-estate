@@ -352,7 +352,7 @@ $agent_list = implode(',', $allowed_agents);
 
 
 
-<div class="testimonial" style="background-image: url(uploads/testimonial-bg.jpg)">
+<div class="testimonial" style="background-image: url(<?php echo BASE_URL; ?>uploads/testimonial-bg.jpg)">
     <div class="bg"></div>
     <div class="container">
         <div class="row">
@@ -363,34 +363,30 @@ $agent_list = implode(',', $allowed_agents);
         <div class="row">
             <div class="col-12">
                 <div class="testimonial-carousel owl-carousel">
-                    <div class="item">
-                        <div class="photo">
-                            <img src="uploads/t1.jpg" alt="" />
+                    <?php
+                    $statement = $pdo->prepare("SELECT * FROM testimonials");
+                    $statement->execute();
+                    $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($result as $row) {
+                    ?>
+                        <div class="item">
+                            <div class="photo">
+                                <img src="<?php echo BASE_URL ?>uploads/<?php echo $row['photo'] ?>" alt="" />
+                            </div>
+                            <div class="text">
+                                <h4><?php echo $row['name'] ?></h4>
+                                <p><?php echo $row['designation'] ?></p>
+                            </div>
+                            <div class="description">
+                                <p>
+                                    <?php echo $row['comment'] ?>
+                                </p>
+                            </div>
                         </div>
-                        <div class="text">
-                            <h4>Robert Krol</h4>
-                            <p>CEO, ABC Company</p>
-                        </div>
-                        <div class="description">
-                            <p>
-                                I recently worked with Patrick Johnson on purchasing my dream home and I couldn't have asked for a better experience. Patrick Johnson was knowledgeable, professional, and truly cared about finding me the perfect property. They were always available to answer my questions and made the entire process stress-free. I highly recommend Patrick Johnson to anyone looking to buy or sell a property!
-                            </p>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="photo">
-                            <img src="uploads/t2.jpg" alt="" />
-                        </div>
-                        <div class="text">
-                            <h4>Sal Harvey</h4>
-                            <p>Director, DEF Company</p>
-                        </div>
-                        <div class="description">
-                            <p>
-                                I had the pleasure of working with Smith Brent during my recent home search and I can't speak highly enough of their services. Smith Brent listened to my needs and helped me find the perfect home that met all of my requirements. They were always there for me, from the initial search to closing, and made the process seamless and enjoyable. I would recommend Smith Brent to anyone looking for an experienced and dedicated real estate agent.
-                            </p>
-                        </div>
-                    </div>
+                    <?php
+                    }
+
+                    ?>
                 </div>
             </div>
         </div>
